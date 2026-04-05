@@ -8,6 +8,12 @@
 ## 🌎 Overview
 **Smart Environmental Monitoring System** is a comprehensive environmental intelligence platform designed to monitor, analyze, and predict regional hazards. By integrating real-time air quality, thermal data, and meteorological telemetry, the system provides a unified "Risk Score" to help decision-makers identify vulnerable clusters before crises occur.
 
+## 🖼️ Visual Showcase
+
+| Live Dashboard | Predictive Intelligence | Interactive Map |
+| :---: | :---: | :---: |
+| ![Dashboard](screenshots/dashboard.png) | ![Analytics](screenshots/predictive_intelligence.png) | ![Map](screenshots/map_view.png) |
+
 ## 🚀 Key Features
 
 - **Live Intelligence Dashboard**: A bento-style UI providing real-time KPIs for average risk, active anomalies, and station health.
@@ -31,13 +37,15 @@
 - **GIS**: Leaflet with high-perf tile rendering.
 - **Charts**: Chart.js for data-heavy visualizations.
 
-## 📦 Local Installation
+## 📦 Installation & Startup
 
-### Prerequisites
-- Java 17 or higher
-- Maven 3.6+
+### **Option 1: One-Click Start (Windows Recommended)**
+If you are on Windows, you can start the entire system (Backend + Frontend) instantly without complex commands:
+1.  Right-click **`RunProject.ps1`**.
+2.  Select **"Run with PowerShell"**.
+3.  The system will automatically find your Java path, compile the project, and launch the server.
 
-### Setup
+### **Option 2: Manual Setup (CLI)**
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/pranav440/Smart-Environmental-Analysis.git
