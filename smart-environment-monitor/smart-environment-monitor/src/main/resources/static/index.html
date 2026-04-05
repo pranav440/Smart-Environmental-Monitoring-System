@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Environmental Analysis | Intelligence Dashboard</title>
+    <meta name="description" content="Real-time environmental monitoring, predictive intelligence, and risk analysis across global monitoring stations.">
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        manrope: ['Manrope', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Custom CSS Overrides -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-900 font-inter">
+
+    <!-- Layout Wrapper -->
+    <div class="flex h-screen overflow-hidden">
+        
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col transition-all duration-300">
+            <div class="p-6">
+                <div class="flex items-center gap-3 text-blue-600 mb-8">
+                    <span class="material-symbols-rounded text-3xl">shield_with_heart</span>
+                    <h1 class="font-manrope font-extrabold text-lg leading-tight tracking-tighter">Smart<br><span class="text-slate-400 text-xs uppercase tracking-widest font-black">Environmental Analysis</span></h1>
+                </div>
+
+                <nav class="space-y-1">
+                    <button class="nav-item active w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-semibold transition-colors" onclick="showSection('dashboard')">
+                        <span class="material-symbols-rounded">dashboard</span>
+                        Dashboard
+                    </button>
+                    <button class="nav-item w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-semibold transition-colors" onclick="showSection('map')">
+                        <span class="material-symbols-rounded">map</span>
+                        Interactive Map
+                    </button>
+                    <button class="nav-item w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-semibold transition-colors" onclick="showSection('alerts')">
+                        <span class="material-symbols-rounded">notifications_active</span>
+                        Alerts Panel
+                    </button>
+                    <button class="nav-item w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-semibold transition-colors" onclick="showSection('analytics')">
+                        <span class="material-symbols-rounded">analytics</span>
+                        Analytics
+                    </button>
+                    <button class="nav-item w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-semibold transition-colors border-2 border-transparent" onclick="showSection('ml')">
+                        <span class="material-symbols-rounded">psychology</span>
+                        Predictive Intelligence
+                    </button>
+                </nav>
+            </div>
+
+            <div class="mt-auto p-6 pt-0">
+                <div class="bg-blue-50 p-4 rounded-xl">
+                    <p class="text-[10px] uppercase font-black text-blue-600 mb-2 tracking-widest">System Status</p>
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <span class="text-xs font-semibold text-blue-800" id="status-text">Connected</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+            
+            <!-- Top Navbar -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center px-8 sticky top-0 z-50 shadow-sm">
+                <button class="mr-6 text-slate-400 hover:text-slate-600 transition-colors" onclick="toggleSidebar()">
+                    <span class="material-symbols-rounded">menu</span>
+                </button>
+                <div class="flex-1 max-w-xl py-4">
+                    <div class="relative group">
+                        <span class="material-symbols-rounded absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl group-focus-within:text-blue-500 transition-colors">search</span>
+                        <input id="city-search" type="text" placeholder="Search monitoring station..." 
+                               class="w-full bg-slate-100 border-none rounded-2xl py-3 pl-12 pr-4 text-sm focus:ring-2 focus:ring-blue-500/20 transition-all shadow-inner">
+                    </div>
+                </div>
+
+                <!-- NEW: Info & Export Actions -->
+                <div class="ml-auto flex items-center gap-3">
+                    <button onclick="downloadLatestData()" title="Export Cluster Data"
+                            class="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl text-xs font-bold hover:bg-emerald-100 transition-all border border-emerald-100 shadow-sm">
+                        <span class="material-symbols-rounded text-lg">download</span>
+                        Export
+                    </button>
+                    <button onclick="toggleInfoModal(true)" title="Project Intelligence & OOP Registry"
+                            class="p-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 flex items-center justify-center">
+                        <span class="material-symbols-rounded">info</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- ==================== DASHBOARD SECTION ==================== -->
+            <div id="dashboard-section" class="section-content p-8 pt-12">
+                <!-- KPI Tiles -->
+                <div class="grid grid-cols-4 gap-6 mb-8">
+                    <div class="kpi-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="p-2 bg-blue-100 text-blue-600 rounded-lg material-symbols-rounded">location_city</span>
+                            <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Global Ops</span>
+                        </div>
+                        <h3 class="text-3xl font-manrope font-extrabold" id="kpi-total-cities">0</h3>
+                        <p class="text-xs font-bold text-slate-400 uppercase mt-1">Total Monitoring Hubs</p>
+                    </div>
+
+                    <div class="kpi-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="p-2 bg-emerald-100 text-emerald-600 rounded-lg material-symbols-rounded">security</span>
+                            <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Avg Risk</span>
+                        </div>
+                        <h3 class="text-3xl font-manrope font-extrabold" id="kpi-avg-risk">0%</h3>
+                        <p class="text-xs font-bold text-slate-400 uppercase mt-1">Mean Safety Threshold</p>
+                    </div>
+
+                    <div class="kpi-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="p-2 bg-rose-100 text-rose-600 rounded-lg material-symbols-rounded">warning</span>
+                            <span class="text-[10px] font-black text-rose-600 uppercase tracking-widest">High Risk</span>
+                        </div>
+                        <h3 class="text-3xl font-manrope font-extrabold" id="kpi-high-risk">0</h3>
+                        <p class="text-xs font-bold text-slate-400 uppercase mt-1">Critical Exposure Alerts</p>
+                    </div>
+
+                    <div class="kpi-card bg-white p-6 rounded-2xl border border-slate-200 shadow-sm transition-all hover:shadow-md">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="p-2 bg-amber-100 text-amber-600 rounded-lg material-symbols-rounded">notifications_active</span>
+                            <span class="text-[10px] font-black text-amber-600 uppercase tracking-widest">Recent</span>
+                        </div>
+                        <h3 class="text-3xl font-manrope font-extrabold" id="kpi-active-alerts">0</h3>
+                        <p class="text-xs font-bold text-slate-400 uppercase mt-1">Active Anomalies</p>
+                    </div>
+                </div>
+
+                <!-- Bento Layout -->
+                <div class="grid grid-cols-12 gap-6">
+                    <!-- Dashboard Map -->
+                    <div class="col-span-8 bg-white border border-slate-200 rounded-3xl overflow-hidden min-h-[400px] shadow-sm relative">
+                        <div id="map" class="w-full h-full z-0"></div>
+                        <div class="absolute top-4 right-4 z-10 glass-panel p-3 rounded-xl border border-white/40 shadow-xl">
+                            <h4 class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Risk Density Distribution</h4>
+                            <div class="flex items-center gap-4 text-[10px] font-bold">
+                                <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-emerald-500"></div> Low</div>
+                                <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-amber-500"></div> Mid</div>
+                                <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-rose-500"></div> High</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Selected City Details Panel -->
+                    <div id="detail-panel" class="col-span-4 flex flex-col gap-6">
+                        <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm flex flex-col items-center text-center relative overflow-hidden">
+                             <div class="absolute top-2 right-2 p-4 opacity-[0.03] pointer-events-none group-hover:opacity-10 transition-opacity">
+                                <span class="material-symbols-rounded text-8xl text-slate-900">query_stats</span>
+                             </div>
+                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1" id="detail-city-type">Monitoring Cluster</p>
+                             <h2 class="text-4xl font-manrope font-extrabold tracking-tighter mb-4" id="detail-city-name">Select Station</h2>
+                             
+                             <div class="flex items-baseline gap-1 mb-2">
+                                <span class="text-6xl font-manrope font-extrabold text-blue-600" id="detail-risk-score">--</span>
+                                <span class="text-xl font-bold text-slate-300">/100</span>
+                             </div>
+                             <div id="detail-risk-badge" class="px-3 py-1 rounded-full text-[10px] font-black uppercase mb-8 bg-slate-100 text-slate-400">Risk Assessment</div>
+
+                             <div class="grid grid-cols-2 gap-4 w-full">
+                                <div class="bg-slate-50 p-4 rounded-2xl flex flex-col items-center">
+                                    <span class="material-symbols-rounded text-slate-400 mb-1">device_thermostat</span>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Temp</p>
+                                    <p class="text-xl font-extrabold" id="detail-temp">--</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-2xl flex flex-col items-center">
+                                    <span class="material-symbols-rounded text-slate-400 mb-1">air</span>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">AQI</p>
+                                    <p class="text-xl font-extrabold" id="detail-aqi">--</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-2xl flex flex-col items-center">
+                                    <span class="material-symbols-rounded text-slate-400 mb-1">humidity_mid</span>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Humidity</p>
+                                    <p class="text-xl font-extrabold" id="detail-humidity">--</p>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-2xl flex flex-col items-center">
+                                    <span class="material-symbols-rounded text-slate-400 mb-1">airwave</span>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Wind</p>
+                                    <p class="text-xl font-extrabold" id="detail-wind">--</p>
+                                </div>
+                             </div>
+                        </div>
+
+                        <!-- Recent Alerts Mini-Feed -->
+                        <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm flex-1">
+                             <div class="flex items-center justify-between mb-4 px-1">
+                                <h4 class="text-[10px] font-black uppercase tracking-widest text-slate-500">Recent Alerts</h4>
+                                <button onclick="showSection('alerts')" class="text-[10px] font-bold text-blue-600 hover:underline">View All →</button>
+                             </div>
+                             <div id="dashboard-alerts-mini" class="space-y-3 overflow-y-auto max-h-48">
+                                <div class="text-xs text-slate-400 text-center py-6">Loading alerts...</div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== INTERACTIVE MAP SECTION ==================== -->
+            <div id="map-section" class="section-content hidden h-[calc(100vh-4rem)] w-full relative">
+                <div id="full-map" class="w-full h-full z-0"></div>
+
+                <!-- Map Controls Panel -->
+                <div class="absolute top-6 left-6 z-10 glass-panel p-6 rounded-2xl border border-white/40 shadow-2xl max-w-sm">
+                    <h2 class="text-2xl font-manrope font-extrabold tracking-tighter mb-2">Global Risk Navigator</h2>
+                    <p class="text-xs text-slate-500 mb-5 font-medium leading-relaxed">Explore monitoring stations with multiple data layers. Switch views to analyze different environmental metrics.</p>
+                    
+                    <!-- VIEW MODE SWITCHER -->
+                    <div class="mb-5">
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Data Layer</p>
+                        <div class="flex gap-2">
+                            <button class="map-view-btn active-map-btn flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold transition-all" data-mode="risk" onclick="setMapViewMode('risk')">
+                                <span class="material-symbols-rounded text-sm">security</span>Risk
+                            </button>
+                            <button class="map-view-btn flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold transition-all" data-mode="pollution" onclick="setMapViewMode('pollution')">
+                                <span class="material-symbols-rounded text-sm">blur_on</span>Pollution
+                            </button>
+                            <button class="map-view-btn flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold transition-all" data-mode="temperature" onclick="setMapViewMode('temperature')">
+                                <span class="material-symbols-rounded text-sm">thermostat</span>Thermal
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- BASE LAYER SWITCHER -->
+                    <div class="mb-5">
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Base Map</p>
+                        <div class="flex gap-2">
+                            <button class="map-layer-btn px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all" data-layer="street" onclick="setMapBaseLayer('street')">Street</button>
+                            <button class="map-layer-btn active-layer-btn px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all" data-layer="satellite" onclick="setMapBaseLayer('satellite')">Satellite</button>
+                            <button class="map-layer-btn px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all" data-layer="dark" onclick="setMapBaseLayer('dark')">Dark</button>
+                            <button class="map-layer-btn px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all" data-layer="topo" onclick="setMapBaseLayer('topo')">Terrain</button>
+                        </div>
+                    </div>
+
+                    <!-- LEGEND -->
+                    <div id="map-legend" class="space-y-2 mt-4 pt-4 border-t border-slate-100">
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Color Guide</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/10"></div>
+                            <span class="text-[10px] font-bold text-slate-500 tracking-tight">Optimal / Safe Range</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2.5 h-2.5 rounded-full bg-amber-500 ring-4 ring-amber-500/10"></div>
+                            <span class="text-[10px] font-bold text-slate-500 tracking-tight">Elevated / Caution</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2.5 h-2.5 rounded-full bg-rose-500 ring-4 ring-rose-500/10"></div>
+                            <span class="text-[10px] font-bold text-slate-500 tracking-tight">High Risk / Threshold Breach</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2.5 h-2.5 rounded-full bg-purple-600 ring-4 ring-purple-600/10"></div>
+                            <span class="text-[10px] font-bold text-slate-500 tracking-tight">Extreme / Critical Anomaly</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== ALERTS PANEL SECTION ==================== -->
+            <div id="alerts-section" class="section-content p-8 pt-6 hidden">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h2 class="text-3xl font-manrope font-extrabold tracking-tighter">Active Alerts & Broadcasts</h2>
+                        <p class="text-sm text-slate-400 mt-1">Real-time environmental warnings generated from live sensor data</p>
+                    </div>
+                    <div id="anomaly-indicator" class="flex items-center gap-3 px-4 py-2 bg-rose-50 border border-rose-100 rounded-xl hidden">
+                        <div class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></div>
+                        <span class="text-xs font-bold text-rose-700 uppercase">System-Wide Anomaly Threshold Breached</span>
+                    </div>
+                </div>
+                <div id="alerts-feed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Dynamic Alert Cards -->
+                </div>
+            </div>
+
+            <!-- ==================== ANALYTICS SECTION ==================== -->
+            <div id="analytics-section" class="section-content p-8 pt-12 hidden">
+                 <div class="flex items-center justify-between mb-8">
+                     <div>
+                        <h2 class="text-3xl font-manrope font-extrabold tracking-tighter">Intelligence & Global Trends</h2>
+                        <p class="text-sm text-slate-400 mt-1">Live comparative analysis across all monitoring stations</p>
+                     </div>
+                 </div>
+                 <div class="grid grid-cols-2 gap-6 mb-8">
+                     <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm h-96">
+                         <h3 class="text-sm font-bold text-slate-600 mb-6">Risk Index by Station</h3>
+                         <div class="h-[calc(100%-2rem)]">
+                            <canvas id="global-risk-trend"></canvas>
+                         </div>
+                     </div>
+                     <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm h-96">
+                         <h3 class="text-sm font-bold text-slate-600 mb-6">Multi-Metric Comparison (AQI × Temp × Humidity)</h3>
+                         <div class="h-[calc(100%-2rem)]">
+                            <canvas id="global-aqi-trend"></canvas>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+                     <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                         <h3 class="text-sm font-bold text-slate-600 uppercase tracking-widest text-[10px]">Leaderboard: Priority Monitoring Clusters</h3>
+                     </div>
+                     <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                            <tr>
+                                <th class="p-6 pb-4">Station Name</th>
+                                <th class="p-6 pb-4 text-center">Temp</th>
+                                <th class="p-6 pb-4 text-center">AQI</th>
+                                <th class="p-6 pb-4 text-center">Wind</th>
+                                <th class="p-6 pb-4 text-center">Risk Score</th>
+                                <th class="p-6 pb-4">Classification</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rankings-table">
+                            <!-- Dynamic Rankings -->
+                        </tbody>
+                     </table>
+                 </div>
+            </div>
+
+            <!-- ==================== ML PREDICTIVE INTELLIGENCE ==================== -->
+            <div id="ml-section" class="section-content p-8 pt-12 hidden">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="p-3 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-200">
+                        <span class="material-symbols-rounded text-3xl">psychology</span>
+                    </div>
+                    <div>
+                        <h2 class="text-4xl font-manrope font-extrabold tracking-tighter">Predictive Intelligence</h2>
+                        <p class="text-sm text-slate-400 font-bold uppercase tracking-widest mt-1">Deep Learning | Spatiotemporal Forensics</p>
+                    </div>
+                    <div class="ml-auto flex items-center gap-4">
+                        <!-- City Selector -->
+                        <select id="ml-city-selector" onchange="onCitySelect(this.value, false); updateMLSection(this.value);"
+                                class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-300 transition-all cursor-pointer">
+                        </select>
+                        <div class="flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                            <span class="text-xs font-black text-slate-600 uppercase tracking-widest">ML Core: ACTIVE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-12 gap-8 mb-8">
+                    <!-- Advanced Risk Profile -->
+                    <div class="col-span-4 bg-white border border-slate-200 rounded-[2.5rem] p-10 shadow-sm relative overflow-hidden">
+                        <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-50 rounded-full opacity-50 blur-3xl"></div>
+                        <p class="text-xs font-black text-blue-600 uppercase tracking-widest mb-2" id="ml-city-name-label">SELECT CLUSTER</p>
+                        <h3 class="text-4xl font-manrope font-extrabold tracking-tighter mb-6">Environmental Stability Index</h3>
+                        
+                        <div class="flex items-baseline gap-2 mb-8">
+                             <span class="text-8xl font-manrope font-extrabold text-blue-600" id="ml-stability-score">--</span>
+                             <span class="text-2xl font-bold text-slate-300">/100</span>
+                        </div>
+
+                        <div class="space-y-5">
+                            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Model Confidence</p>
+                                <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+                                     <div id="ml-confidence-bar" class="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full transition-all duration-700" style="width: 0%"></div>
+                                </div>
+                                <div class="flex justify-between mt-2 text-[10px] font-bold text-slate-500">
+                                     <span id="ml-confidence-text">Precision: --</span>
+                                     <span id="ml-sync-time" class="text-emerald-500">Last sync: --</span>
+                                </div>
+                            </div>
+
+                            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">24h Micro-Trend</p>
+                                <div class="h-36">
+                                    <canvas id="ml-hourly-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 365-Day Extended Forecasting -->
+                    <div class="col-span-8 bg-white border border-slate-200 rounded-[2.5rem] p-10 shadow-sm flex flex-col h-[550px]">
+                        <div class="flex justify-between items-start mb-8">
+                            <div>
+                                <h4 class="text-xl font-manrope font-extrabold tracking-tight">Yearly Atmospheric Progression</h4>
+                                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Multi-Series Model Projection with Confidence Band</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest">Risk</span>
+                                <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-widest">AQI</span>
+                                <span class="px-3 py-1 rounded-full bg-amber-50 text-amber-600 text-[10px] font-black uppercase tracking-widest">Temp</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 w-full relative">
+                            <canvas id="ml-yearly-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-8 pb-12">
+                    <!-- Radar Chart -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Ecological Balance Radar</h4>
+                        <div class="h-64">
+                            <canvas id="ml-radar-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 7-Day Prediction Chart (NEW) -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                        <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">7-Day Risk Forecast</h4>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-4">Short-term Predictive Intelligence</p>
+                        <div class="h-52 relative">
+                            <canvas id="ml-7day-forecast" class="w-full h-full"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Anomaly Detection Info -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-10 opacity-10">
+                            <span class="material-symbols-rounded text-9xl text-white">flare</span>
+                        </div>
+                        <h3 class="text-white text-xl font-manrope font-extrabold tracking-tighter mb-4">Neural Engine</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed mb-6">Our predictive engine identifies spatiotemporal atmospheric anomalies before sensors detect threshold breaches.</p>
+                        <div id="ml-stats-grid" class="grid grid-cols-2 gap-3">
+                             <div class="px-4 py-3 bg-white/5 border border-white/10 rounded-xl">
+                                 <p class="text-[8px] text-blue-400 font-black uppercase tracking-widest mb-1">Sensors</p>
+                                 <p class="text-white text-lg font-black" id="ml-stat-sensors">--</p>
+                             </div>
+                             <div class="px-4 py-3 bg-white/5 border border-white/10 rounded-xl">
+                                 <p class="text-[8px] text-emerald-400 font-black uppercase tracking-widest mb-1">Horizon</p>
+                                 <p class="text-white text-lg font-black">7-Day</p>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ==================== COMPREHENSIVE PROJECT INFO MODAL ==================== -->
+    <div id="info-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-full max-w-6xl rounded-[2.5rem] shadow-2xl overflow-hidden relative border border-white flex flex-col max-h-[90vh]">
+            <!-- Modal Header -->
+            <div class="p-8 pb-6 flex justify-between items-start border-b border-slate-100 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-white/20 backdrop-blur-sm rounded-2xl">
+                        <span class="material-symbols-rounded text-3xl">menu_book</span>
+                    </div>
+                    <div>
+                        <h2 class="text-4xl font-manrope font-extrabold tracking-tighter">Environmental Monitoring & Risk Intelligence System</h2>
+                        <p class="text-sm text-blue-100 font-bold uppercase tracking-widest mt-1">Complete Project Guide & OOP Architecture Documentation</p>
+                    </div>
+                </div>
+                <button onclick="toggleInfoModal(false)" class="p-3 hover:bg-white/10 rounded-full transition-colors">
+                    <span class="material-symbols-rounded text-white text-2xl">close</span>
+                </button>
+            </div>
+
+            <!-- Scrollable Content -->
+            <main class="flex-1 overflow-y-auto p-8 space-y-12">
+                
+                <!-- SECTION 1: PROJECT OVERVIEW -->
+                <section class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-3xl p-10 border border-blue-100">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-2 h-12 bg-blue-600 rounded-full"></div>
+                        <h3 class="text-3xl font-manrope font-extrabold text-slate-900">Project Overview</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-800 mb-4">🎯 Problem Statement</h4>
+                            <p class="text-slate-600 leading-relaxed mb-6">
+                                Environmental threats are increasing globally due to climate change, urbanization, and industrialization. 
+                                Traditional monitoring systems are fragmented, providing data without intelligent analysis or predictive capabilities. 
+                                Organizations struggle to transform raw environmental data into actionable intelligence for proactive decision-making.
+                            </p>
+                            
+                            <h4 class="text-lg font-bold text-slate-800 mb-4">💡 Solution Overview</h4>
+                            <p class="text-slate-600 leading-relaxed">
+                                An integrated environmental intelligence platform that combines real-time monitoring, risk assessment, 
+                                machine learning predictions, and automated alerting. The system processes multi-dimensional environmental data 
+                                to generate comprehensive risk profiles and predictive insights for urban centers worldwide.
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-lg font-bold text-slate-800 mb-4">⚡ System Workflow</h4>
+                            <div class="bg-white p-6 rounded-2xl border border-slate-200 font-mono text-sm">
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-blue-600">📡</span>
+                                        <span>Weather Data → Risk Calculation</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-emerald-600">🗄️</span>
+                                        <span>Database Storage → ML Processing</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-purple-600">🤖</span>
+                                        <span>Predictive Analytics → Alert Generation</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-amber-600">📊</span>
+                                        <span>Visualization → Decision Support</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h4 class="text-lg font-bold text-slate-800 mb-4 mt-6">🔧 Key Features</h4>
+                            <ul class="space-y-2 text-slate-600">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-600 mt-1">•</span>
+                                    <span><strong>Real-time Monitoring:</strong> Live environmental data from global sensors</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-600 mt-1">•</span>
+                                    <span><strong>Risk Intelligence:</strong> Multi-factor risk assessment with strategy pattern</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-600 mt-1">•</span>
+                                    <span><strong>ML Predictions:</strong> 7-day forecasting with linear regression</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-600 mt-1">•</span>
+                                    <span><strong>Anomaly Detection:</strong> Z-score based statistical analysis</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-600 mt-1">•</span>
+                                    <span><strong>Smart Alerts:</strong> Observer pattern for threshold monitoring</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-600 mt-1">•</span>
+                                    <span><strong>Interactive Maps:</strong> Multi-layer GIS visualization</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-600 mt-1">•</span>
+                                    <span><strong>Analytics Dashboard:</strong> Trend analysis and comparative insights</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-blue-600 mt-1">•</span>
+                                    <span><strong>Export Capabilities:</strong> CSV/PDF report generation</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 2: SYSTEM ARCHITECTURE -->
+                <section class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-3xl p-10 border border-emerald-100">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-2 h-12 bg-emerald-600 rounded-full"></div>
+                        <h3 class="text-3xl font-manrope font-extrabold text-slate-900">System Architecture & Workflow</h3>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl p-8 border border-emerald-200">
+                        <h4 class="text-xl font-bold text-slate-800 mb-6">🔄 Data Flow Architecture</h4>
+                        
+                        <div class="grid grid-cols-4 gap-4 mb-8">
+                            <div class="text-center p-4 bg-blue-50 rounded-xl border border-blue-200">
+                                <div class="text-3xl mb-2">🌍</div>
+                                <h5 class="font-bold text-blue-800">Data Sources</h5>
+                                <p class="text-xs text-blue-600 mt-2">Weather APIs<br/>Sensors<br/>Satellite Data</p>
+                            </div>
+                            <div class="text-center p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+                                <div class="text-3xl mb-2">⚙️</div>
+                                <h5 class="font-bold text-emerald-800">Processing</h5>
+                                <p class="text-xs text-emerald-600 mt-2">Risk Calculation<br/>ML Models<br/>Anomaly Detection</p>
+                            </div>
+                            <div class="text-center p-4 bg-purple-50 rounded-xl border border-purple-200">
+                                <div class="text-3xl mb-2">🗄️</div>
+                                <h5 class="font-bold text-purple-800">Storage</h5>
+                                <p class="text-xs text-purple-600 mt-2">MySQL Database<br/>Historical Data<br/>Cache Layer</p>
+                            </div>
+                            <div class="text-center p-4 bg-amber-50 rounded-xl border border-amber-200">
+                                <div class="text-3xl mb-2">📊</div>
+                                <h5 class="font-bold text-amber-800">Presentation</h5>
+                                <p class="text-xs text-amber-600 mt-2">Dashboard<br/>Maps<br/>Alerts<br/>Reports</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-50 rounded-xl p-6 border border-slate-200">
+                            <h5 class="font-bold text-slate-800 mb-4">📋 Technical Implementation Flow</h5>
+                            <div class="space-y-3 font-mono text-sm">
+                                <div class="flex items-center gap-3">
+                                    <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs">1</span>
+                                    <span>RealTimeWeatherClient.fetch() → EnvironmentalData Object</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs">2</span>
+                                    <span>RiskStrategy.calculateRisk() → Composite Risk Score</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs">3</span>
+                                    <span>City.updateEnvironmentalData() → Historical Storage</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs">4</span>
+                                    <span>LinearRegressionPredictor.predict() → 7-Day Forecast</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs">5</span>
+                                    <span>AlertObserver.onAlert() → Notification Broadcast</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs">6</span>
+                                    <span>REST API → Frontend Dashboard Updates</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 3: DASHBOARD GUIDE -->
+                <section class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-10 border border-blue-100">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-2 h-12 bg-blue-600 rounded-full"></div>
+                        <h3 class="text-3xl font-manrope font-extrabold text-slate-900">Dashboard Intelligence Guide</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-800 mb-4">📈 KPI Cards Explained</h4>
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-xl border border-blue-200">
+                                    <h5 class="font-bold text-blue-800 flex items-center gap-2">
+                                        <span class="material-symbols-rounded">location_city</span>
+                                        Total Monitoring Hubs
+                                    </h5>
+                                    <p class="text-sm text-slate-600 mt-2">
+                                        Count of all active cities in the monitoring network. 
+                                        Each hub represents a comprehensive environmental station with multiple sensors.
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl border border-emerald-200">
+                                    <h5 class="font-bold text-emerald-800 flex items-center gap-2">
+                                        <span class="material-symbols-rounded">security</span>
+                                        Mean Safety Threshold
+                                    </h5>
+                                    <p class="text-sm text-slate-600 mt-2">
+                                        Average risk score across all cities (0-100%). 
+                                        Lower values indicate safer environmental conditions globally.
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl border border-rose-200">
+                                    <h5 class="font-bold text-rose-800 flex items-center gap-2">
+                                        <span class="material-symbols-rounded">warning</span>
+                                        Critical Exposure Alerts
+                                    </h5>
+                                    <p class="text-sm text-slate-600 mt-2">
+                                        Cities with risk scores above 60% requiring immediate attention. 
+                                        These locations have breached multiple safety thresholds.
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl border border-amber-200">
+                                    <h5 class="font-bold text-amber-800 flex items-center gap-2">
+                                        <span class="material-symbols-rounded">notifications_active</span>
+                                        Active Anomalies
+                                    </h5>
+                                    <p class="text-sm text-slate-600 mt-2">
+                                        Real-time detected anomalies using Z-score statistical analysis. 
+                                        Values exceeding 2.5 standard deviations from historical means.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-800 mb-4">🎯 Interactive Features</h4>
+                            <div class="bg-white p-6 rounded-xl border border-slate-200">
+                                <h5 class="font-bold text-slate-800 mb-4">City Selection System</h5>
+                                <ol class="space-y-3 text-sm text-slate-600">
+                                    <li class="flex gap-3">
+                                        <span class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs">1</span>
+                                        <span><strong>Map Interaction:</strong> Click any city marker on the dashboard map</span>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs">2</span>
+                                        <span><strong>Search Bar:</strong> Use the global search for quick city access</span>
+                                    </li>
+                                    <li class="flex gap-3">
+                                        <span class="bg-blue-100 text-blue-600 rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs">3</span>
+                                        <span><strong>Dropdown Selector:</strong> ML section has dedicated city selector</span>
+                                    </li>
+                                </ol>
+                                
+                                <h5 class="font-bold text-slate-800 mb-4 mt-6">Risk Badge Classification</h5>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-3 p-3 bg-emerald-50 rounded-lg">
+                                        <div class="w-4 h-4 rounded-full bg-emerald-500"></div>
+                                        <span class="font-semibold text-emerald-800">Low Risk (0-40%)</span>
+                                        <span class="text-sm text-slate-600">Safe environmental conditions</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-3 bg-amber-50 rounded-lg">
+                                        <div class="w-4 h-4 rounded-full bg-amber-500"></div>
+                                        <span class="font-semibold text-amber-800">Medium Risk (41-70%)</span>
+                                        <span class="text-sm text-slate-600">Elevated conditions, monitoring required</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-3 bg-rose-50 rounded-lg">
+                                        <div class="w-4 h-4 rounded-full bg-rose-500"></div>
+                                        <span class="font-semibold text-rose-800">High Risk (71-100%)</span>
+                                        <span class="text-sm text-slate-600">Critical conditions, immediate action needed</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 4: MAP GUIDE -->
+                <section class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-3xl p-10 border border-emerald-100">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-2 h-12 bg-emerald-600 rounded-full"></div>
+                        <h3 class="text-3xl font-manrope font-extrabold text-slate-900">Interactive Map Navigator</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-800 mb-4">🗺️ Map Functionality</h4>
+                            <div class="bg-white p-6 rounded-xl border border-emerald-200">
+                                <p class="text-slate-600 mb-4">
+                                    The Global Risk Navigator provides real-time visualization of environmental conditions 
+                                    across all monitoring stations with advanced GIS capabilities.
+                                </p>
+                                
+                                <h5 class="font-bold text-slate-800 mb-3">Core Features:</h5>
+                                <ul class="space-y-2 text-sm text-slate-600">
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-emerald-600 mt-1">✓</span>
+                                        <span><strong>Interactive Markers:</strong> Click cities for detailed information</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-emerald-600 mt-1">✓</span>
+                                        <span><strong>Zoom Controls:</strong> Global to street-level navigation</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-emerald-600 mt-1">✓</span>
+                                        <span><strong>Real-time Updates:</strong> 60-second refresh intervals</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-emerald-600 mt-1">✓</span>
+                                        <span><strong>Cluster Analysis:</strong> Regional risk pattern identification</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-800 mb-4">🎨 Data Layers & Color Coding</h4>
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                                    <h5 class="font-bold text-slate-800 mb-3">Data Layer Switcher</h5>
+                                    <div class="grid grid-cols-3 gap-2 text-sm">
+                                        <div class="text-center p-3 bg-blue-50 rounded-lg border border-blue-200">
+                                            <div class="text-lg mb-1">🛡️</div>
+                                            <div class="font-bold text-blue-800">Risk Layer</div>
+                                            <div class="text-xs text-blue-600">Composite risk scores</div>
+                                        </div>
+                                        <div class="text-center p-3 bg-purple-50 rounded-lg border border-purple-200">
+                                            <div class="text-lg mb-1">💨</div>
+                                            <div class="font-bold text-purple-800">Pollution Layer</div>
+                                            <div class="text-xs text-purple-600">AQI visualization</div>
+                                        </div>
+                                        <div class="text-center p-3 bg-orange-50 rounded-lg border border-orange-200">
+                                            <div class="text-lg mb-1">🌡️</div>
+                                            <div class="font-bold text-orange-800">Thermal Layer</div>
+                                            <div class="text-xs text-orange-600">Temperature mapping</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                                    <h5 class="font-bold text-slate-800 mb-3">Color Classification System</h5>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-6 h-6 rounded-full bg-emerald-500"></div>
+                                            <span class="text-sm"><strong>Green:</strong> Optimal/Safe Range (Risk 0-40%)</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-6 h-6 rounded-full bg-amber-500"></div>
+                                            <span class="text-sm"><strong>Orange:</strong> Elevated/Caution (Risk 41-70%)</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-6 h-6 rounded-full bg-rose-500"></div>
+                                            <span class="text-sm"><strong>Red:</strong> High Risk/Threshold Breach (Risk 71-100%)</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-6 h-6 rounded-full bg-purple-600"></div>
+                                            <span class="text-sm"><strong>Purple:</strong> Extreme/Critical Anomaly</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 5: ALERTS GUIDE -->
+                <section class="bg-gradient-to-br from-rose-50 to-red-50 rounded-3xl p-10 border border-rose-100">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-2 h-12 bg-rose-600 rounded-full"></div>
+                        <h3 class="text-3xl font-manrope font-extrabold text-slate-900">Alert System & Observer Pattern</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-800 mb-4">🚨 Alert Types & Triggers</h4>
+                            <div class="space-y-3">
+                                <div class="bg-white p-4 rounded-xl border border-rose-200">
+                                    <h5 class="font-bold text-rose-800 flex items-center gap-2">
+                                        <span class="material-symbols-rounded">whatshot</span>
+                                        Heatwave Alert
+                                    </h5>
+                                    <p class="text-sm text-slate-600 mt-2">
+                                        <strong>Trigger:</strong> Temperature > 38°C<br/>
+                                        <strong>Risk:</strong> Health emergency, energy grid stress
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl border border-purple-200">
+                                    <h5 class="font-bold text-purple-800 flex items-center gap-2">
+                                        <span class="material-symbols-rounded">air</span>
+                                        AQI Alert
+                                    </h5>
+                                    <p class="text-sm text-slate-600 mt-2">
+                                        <strong>Trigger:</strong> AQI > 150 (Unhealthy level)<br/>
+                                        <strong>Risk:</strong> Respiratory issues, visibility reduction
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl border border-amber-200">
+                                    <h5 class="font-bold text-amber-800 flex items-center gap-2">
+                                        <span class="material-symbols-rounded">water_drop</span>
+                                        Drought Alert
+                                    </h5>
+                                    <p class="text-sm text-slate-600 mt-2">
+                                        <strong>Trigger:</strong> Humidity < 30% + High Temp<br/>
+                                        <strong>Risk:</strong> Agricultural impact, water scarcity
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl border border-blue-200">
+                                    <h5 class="font-bold text-blue-800 flex items-center gap-2">
+                                        <span class="material-symbols-rounded">tsunami</span>
+                                        Sea Level Alert
+                                    </h5>
+                                    <p class="text-sm text-slate-600 mt-2">
+                                        <strong>Trigger:</strong> Coastal cities + Risk modifier<br/>
+                                        <strong>Risk:</strong> Flooding, infrastructure damage
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-800 mb-4">🧠 Observer Pattern Implementation</h4>
+                            <div class="bg-slate-900 text-white p-6 rounded-xl">
+                                <h5 class="font-bold text-cyan-400 mb-4">Design Pattern Benefits</h5>
+                                <ul class="space-y-3 text-sm">
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-cyan-400 mt-1">•</span>
+                                        <span><strong>Loose Coupling:</strong> Alert sources don't need to know about notification methods</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-cyan-400 mt-1">•</span>
+                                        <span><strong>Dynamic Subscription:</strong> New observers can be added at runtime</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-cyan-400 mt-1">•</span>
+                                        <span><strong>Broadcast Capability:</strong> Single event triggers multiple notifications</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-cyan-400 mt-1">•</span>
+                                        <span><strong>Error Isolation:</strong> Failed notifications don't affect other observers</span>
+                                    </li>
+                                </ul>
+                                
+                                <div class="mt-6 p-4 bg-white/10 rounded-lg border border-white/20">
+                                    <h6 class="font-bold text-cyan-300 mb-2">Code Implementation:</h6>
+                                    <code class="text-xs text-cyan-100">
+                                        AlertSubject.notifyObservers(event) →<br/>
+                                        DashboardAlertObserver.onAlert() →<br/>
+                                        UI Update + Database Log
+                                    </code>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-white p-4 rounded-xl border border-slate-200 mt-4">
+                                <h5 class="font-bold text-slate-800 mb-3">📍 Locate Feature</h5>
+                                <p class="text-sm text-slate-600">
+                                    Each alert card includes a "Locate" button that automatically centers the map 
+                                    on the affected city and highlights the specific environmental threat. 
+                                    This provides immediate spatial context for rapid response coordination.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 6: ANALYTICS GUIDE -->
+                <section class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-10 border border-amber-100">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-2 h-12 bg-amber-600 rounded-full"></div>
+                        <h3 class="text-3xl font-manrope font-extrabold text-slate-900">Analytics & Intelligence Suite</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-800 mb-4">📊 Chart Visualizations</h4>
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-xl border border-amber-200">
+                                    <h5 class="font-bold text-amber-800 mb-2">Risk Index by Station</h5>
+                                    <p class="text-sm text-slate-600">
+                                        Bar chart showing comparative risk scores across all monitoring stations. 
+                                        Enables quick identification of high-risk locations requiring immediate attention.
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl border border-blue-200">
+                                    <h5 class="font-bold text-blue-800 mb-2">Multi-Metric Comparison</h5>
+                                    <p class="text-sm text-slate-600">
+                                        Combined visualization of AQI, Temperature, and Humidity trends. 
+                                        Correlates different environmental factors to identify patterns and relationships.
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-xl border border-purple-200">
+                                    <h5 class="font-bold text-purple-800 mb-2">7-Day Forecast Chart</h5>
+                                    <p class="text-sm text-slate-600">
+                                        Linear regression-based prediction showing risk trajectory for the next week. 
+                                        Includes confidence intervals and trend analysis.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-800 mb-4">🏆 Leaderboard System</h4>
+                            <div class="bg-white p-6 rounded-xl border border-slate-200">
+                                <p class="text-sm text-slate-600 mb-4">
+                                    Global ranking system that prioritizes cities based on composite risk assessment. 
+                                    The ranking algorithm considers multiple factors including current conditions, 
+                                    historical trends, and prediction confidence.
+                                </p>
+                                
+                                <h5 class="font-bold text-slate-800 mb-3">Ranking Criteria:</h5>
+                                <ul class="space-y-2 text-sm text-slate-600">
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-amber-600 mt-1">▸</span>
+                                        <span><strong>Primary:</strong> Current risk score (0-100%)</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-amber-600 mt-1">▸</span>
+                                        <span><strong>Secondary:</strong> Risk trend trajectory</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-amber-600 mt-1">▸</span>
+                                        <span><strong>Tertiary:</strong> City type risk modifier</span>
+                                    </li>
+                                    <li class="flex items-start gap-2">
+                                        <span class="text-amber-600 mt-1">▸</span>
+                                        <span><strong>Quaternary:</strong> Anomaly frequency</span>
+                                    </li>
+                                </ul>
+                                
+                                <div class="mt-4 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                                    <p class="text-xs text-amber-800">
+                                        <strong>Sort Options:</strong> Click table headers to sort by Temperature, AQI, or Risk Score. 
+                                        Export functionality generates professional PDF reports for stakeholder presentations.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 7: ML & PREDICTION GUIDE -->
+                <section class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-3xl p-10 border border-purple-100">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-2 h-12 bg-purple-600 rounded-full"></div>
+                        <h3 class="text-3xl font-manrope font-extrabold text-slate-900">Machine Learning & Predictive Intelligence</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-800 mb-4">🤖 Linear Regression Predictor</h4>
+                            <div class="bg-white p-6 rounded-xl border border-purple-200">
+                                <p class="text-sm text-slate-600 mb-4">
+                                    Our ML engine uses linear regression to generate 7-day environmental risk forecasts 
+                                    based on historical data patterns and trends.
+                                </p>
+                                
+                                <h5 class="font-bold text-slate-800 mb-3">Mathematical Foundation:</h5>
+                                <div class="bg-slate-100 p-4 rounded-lg font-mono text-xs">
+                                    <div>y = mx + b</div>
+                                    <div>where: y = predicted risk</div>
+                                    <div>m = slope (trend direction)</div>
+                                    <div>x = time index</div>
+                                    <div>b = intercept (baseline risk)</div>
+                                </div>
+                                
+                                <h5 class="font-bold text-slate-800 mb-3 mt-4">Key Features:</h5>
+                                <ul class="space-y-2 text-sm text-slate-600">
+                                    <li>• Minimum 3 data points required for accurate prediction</li>
+                                    <li>• Automatic fallback for insufficient historical data</li>
+                                    <li>• Risk values capped between 0-100% for consistency</li>
+                                    <li>• Real-time model updates with each new data point</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-xl font-bold text-slate-800 mb-4">📈 Anomaly Detection System</h4>
+                            <div class="bg-white p-6 rounded-xl border border-indigo-200">
+                                <h5 class="font-bold text-indigo-800 mb-3">Z-Score Statistical Analysis</h5>
+                                <p class="text-sm text-slate-600 mb-4">
+                                    Anomalies are detected using Z-score calculation, measuring how many standard 
+                                    deviations a current value deviates from the historical mean.
+                                </p>
+                                
+                                <div class="bg-slate-900 text-white p-4 rounded-lg">
+                                    <h6 class="font-bold text-cyan-400 mb-2">Anomaly Formula:</h6>
+                                    <code class="text-xs text-cyan-100">
+                                        Z = (current - mean) / stdDev<br/>
+                                        Threshold: |Z| > 2.5
+                                    </code>
+                                </div>
+                                
+                                <h5 class="font-bold text-slate-800 mb-3 mt-4">Stability Index</h5>
+                                <p class="text-sm text-slate-600">
+                                    Quantifies predictability based on historical variance. Lower variance = higher stability = 
+                                    more reliable predictions. Calculated as inverse of coefficient of variation.
+                                </p>
+                                
+                                <h5 class="font-bold text-slate-800 mb-3 mt-4">Confidence Metrics</h5>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                                        <div class="font-bold text-green-800">High (>80%)</div>
+                                        <div class="text-xs text-green-600">Stable patterns, reliable forecast</div>
+                                    </div>
+                                    <div class="bg-amber-50 p-3 rounded-lg border border-amber-200">
+                                        <div class="font-bold text-amber-800">Medium (50-80%)</div>
+                                        <div class="text-xs text-amber-600">Moderate variability</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 8: HOW TO USE GUIDE -->
+                <section class="bg-gradient-to-br from-teal-50 to-cyan-50 rounded-3xl p-10 border border-teal-100">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-2 h-12 bg-teal-600 rounded-full"></div>
+                        <h3 class="text-3xl font-manrope font-extrabold text-slate-900">System Operation Protocol</h3>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl p-8 border border-teal-200">
+                        <div class="grid grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="text-xl font-bold text-slate-800 mb-6">🚀 Quick Start Guide</h4>
+                                <div class="space-y-4">
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold flex-shrink-0">1</div>
+                                        <div>
+                                            <h5 class="font-bold text-slate-800">Launch Dashboard</h5>
+                                            <p class="text-sm text-slate-600">Open the application and wait for initial data synchronization. Status indicator shows "Connected" when ready.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold flex-shrink-0">2</div>
+                                        <div>
+                                            <h5 class="font-bold text-slate-800">Select Monitoring Station</h5>
+                                            <p class="text-sm text-slate-600">Click any city on the map or use the search bar to focus on specific locations.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center font-bold flex-shrink-0">3</div>
+                                        <div>
+                                            <h5 class="font-bold text-slate-800">Analyze Risk Profile</h5>
+                                            <p class="text-sm text-slate-600">Review the risk score, environmental metrics, and classification badge in the detail panel.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold flex-shrink-0">4</div>
+                                        <div>
+                                            <h5 class="font-bold text-slate-800">Explore Interactive Map</h5>
+                                            <p class="text-sm text-slate-600">Switch between Risk, Pollution, and Thermal layers to understand different environmental aspects.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-rose-600 text-white flex items-center justify-center font-bold flex-shrink-0">5</div>
+                                        <div>
+                                            <h5 class="font-bold text-slate-800">Monitor Active Alerts</h5>
+                                            <p class="text-sm text-slate-600">Check the Alerts panel for threshold breaches and use Locate feature for spatial context.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold flex-shrink-0">6</div>
+                                        <div>
+                                            <h5 class="font-bold text-slate-800">Review Trends & Analytics</h5>
+                                            <p class="text-sm text-slate-600">Analyze charts and leaderboard to identify patterns and compare cities.</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex gap-4">
+                                        <div class="w-10 h-10 rounded-full bg-cyan-600 text-white flex items-center justify-center font-bold flex-shrink-0">7</div>
+                                        <div>
+                                            <h5 class="font-bold text-slate-800">View Predictions</h5>
+                                            <p class="text-sm text-slate-600">Access the Predictive Intelligence section for 7-day forecasts and stability analysis.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-xl font-bold text-slate-800 mb-6">⚡ Advanced Features</h4>
+                                <div class="space-y-4">
+                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                        <h5 class="font-bold text-slate-800 flex items-center gap-2">
+                                            <span class="material-symbols-rounded text-blue-600">download</span>
+                                            Data Export
+                                        </h5>
+                                        <p class="text-sm text-slate-600 mt-2">
+                                            Use the Export button to download CSV files containing current environmental data 
+                                            for all cities. Ideal for external analysis and reporting.
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                        <h5 class="font-bold text-slate-800 flex items-center gap-2">
+                                            <span class="material-symbols-rounded text-purple-600">update</span>
+                                            Real-time Updates
+                                        </h5>
+                                        <p class="text-sm text-slate-600 mt-2">
+                                            System automatically refreshes every 60 seconds. Manual refresh available 
+                                            by reloading the page or waiting for the next sync cycle.
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                        <h5 class="font-bold text-slate-800 flex items-center gap-2">
+                                            <span class="material-symbols-rounded text-amber-600">fullscreen</span>
+                                            Responsive Design
+                                        </h5>
+                                        <p class="text-sm text-slate-600 mt-2">
+                                            Fully responsive interface adapts to desktop, tablet, and mobile screens. 
+                                            Sidebar collapses on smaller devices for optimal viewing.
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                        <h5 class="font-bold text-slate-800 flex items-center gap-2">
+                                            <span class="material-symbols-rounded text-emerald-600">health_and_safety</span>
+                                            Health Check API
+                                        </h5>
+                                        <p class="text-sm text-slate-600 mt-2">
+                                            System health monitoring via /api/health endpoint provides status, 
+                                            city counts, and timestamp for operational monitoring.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 9: KEY TERMINOLOGY -->
+                <section class="bg-gradient-to-br from-slate-50 to-gray-100 rounded-3xl p-10 border border-slate-200">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-2 h-12 bg-slate-600 rounded-full"></div>
+                        <h3 class="text-3xl font-manrope font-extrabold text-slate-900">Key Intelligence Terms</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-blue-800 mb-3 flex items-center gap-2">
+                                <span class="material-symbols-rounded">security</span>
+                                Risk Score
+                            </h4>
+                            <p class="text-sm text-slate-600">
+                                Composite hazard index (0-100%) calculated using multiple environmental factors 
+                                including AQI, temperature, humidity, and city-specific risk modifiers. 
+                                Higher scores indicate greater environmental danger.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-emerald-800 mb-3 flex items-center gap-2">
+                                <span class="material-symbols-rounded">air</span>
+                                AQI Classification
+                            </h4>
+                            <p class="text-sm text-slate-600">
+                                EPA-standard Air Quality Index ranging from Good (0-50) to Hazardous (>300). 
+                                Considers PM2.5, PM10, CO, SO2, NO2, and O3 levels. 
+                                Used in pollution risk calculations and public health advisories.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-purple-800 mb-3 flex items-center gap-2">
+                                <span class="material-symbols-rounded">flare</span>
+                                Anomaly Detection
+                            </h4>
+                            <p class="text-sm text-slate-600">
+                                Statistical identification of unusual environmental patterns using Z-score analysis. 
+                                Values exceeding 2.5 standard deviations from historical means trigger alerts. 
+                                Critical for early warning systems.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-amber-800 mb-3 flex items-center gap-2">
+                                <span class="material-symbols-rounded">trending_up</span>
+                                Stability Index
+                            </h4>
+                            <p class="text-sm text-slate-600">
+                                Quantifies environmental predictability based on historical variance. 
+                                Higher values indicate stable patterns and more reliable predictions. 
+                                Calculated as inverse of coefficient of variation.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-rose-800 mb-3 flex items-center gap-2">
+                                <span class="material-symbols-rounded">psychology</span>
+                                Prediction
+                            </h4>
+                            <p class="text-sm text-slate-600">
+                                7-day environmental risk forecast using linear regression. 
+                                Incorporates historical trends, seasonality, and current conditions. 
+                                Includes confidence intervals for uncertainty quantification.
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-indigo-800 mb-3 flex items-center gap-2">
+                                <span class="material-symbols-rounded">location_city</span>
+                                City Type Modifier
+                            </h4>
+                            <p class="text-sm text-slate-600">
+                                Risk adjustment factor based on urban classification:
+                                <br/>• <strong>Metro:</strong> Population density + vehicle count
+                                <br/>• <strong>Coastal:</strong> Sea level + humidity factors
+                                <br/>• <strong>Himalayan:</strong> Altitude + temperature variance
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 10: OOP CONCEPTS (EXAMINER FOCUS) -->
+                <section class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-10 text-white shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-16 opacity-5 pointer-events-none">
+                        <span class="material-symbols-rounded text-[24rem]">architecture</span>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-2 h-12 bg-white rounded-full"></div>
+                            <h3 class="text-4xl font-manrope font-extrabold tracking-tighter">OOP Architectural Blueprint</h3>
+                        </div>
+                        <p class="text-blue-100 font-medium mb-12 italic text-lg">Targeting HIGH COHESION and LOOSE COUPLING architectural standards for enterprise-grade software design.</p>
+                        
+                        <div class="grid grid-cols-2 gap-8">
+                            <div class="p-8 bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl hover:bg-white/15 transition-all">
+                                <h5 class="flex items-center gap-3 text-xl font-black text-white mb-4">
+                                    <span class="material-symbols-rounded text-blue-300">blur_on</span> 
+                                    Abstraction
+                                </h5>
+                                <p class="text-sm leading-relaxed text-blue-100 font-medium">
+                                    <strong className="text-cyan-300">RiskStrategy Interface</strong> hides complex mathematical calculations behind unified contracts. 
+                                    Different risk calculation algorithms (AQI, Heatwave, Drought) implement the same interface, ensuring consistency 
+                                    without exposing implementation complexity to client code.
+                                </p>
+                                <div class="mt-4 p-3 bg-black/20 rounded-lg border border-white/10">
+                                    <code class="text-xs text-cyan-200">
+                                        public interface RiskStrategy {<br/>
+                                        &nbsp;&nbsp;double calculateRisk(EnvironmentalData data);<br/>
+                                        &nbsp;&nbsp;String getRiskFactor();<br/>
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+                            
+                            <div class="p-8 bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl hover:bg-white/15 transition-all">
+                                <h5 class="flex items-center gap-3 text-xl font-black text-white mb-4">
+                                    <span class="material-symbols-rounded text-emerald-300">lock</span> 
+                                    Encapsulation
+                                </h5>
+                                <p class="text-sm leading-relaxed text-blue-100 font-medium">
+                                    <strong className="text-emerald-300">City & EnvironmentalData</strong> classes implement strict data hiding. 
+                                    Private fields with controlled getters/setters maintain state integrity. 
+                                    Historical data management uses CopyOnWriteArrayList for thread-safe operations.
+                                </p>
+                                <div class="mt-4 p-3 bg-black/20 rounded-lg border border-white/10">
+                                    <code class="text-xs text-emerald-200">
+                                        private double temperature;<br/>
+                                        private double aqi;<br/>
+                                        // Controlled access via getters/setters<br/>
+                                        public void updateEnvironmentalData(data) { ... }
+                                    </code>
+                                </div>
+                            </div>
+                            
+                            <div class="p-8 bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl hover:bg-white/15 transition-all">
+                                <h5 class="flex items-center gap-3 text-xl font-black text-white mb-4">
+                                    <span class="material-symbols-rounded text-amber-300">account_tree</span> 
+                                    Inheritance
+                                </h5>
+                                <p class="text-sm leading-relaxed text-blue-100 font-medium">
+                                    <strong className="text-amber-300">Specialized City Models</strong> extend base functionality while maintaining core behavior. 
+                                    MetroCity adds population density factors, CoastalCity incorporates sea-level risks, 
+                                    HimalayanCity accounts for altitude effects - all inheriting common environmental data management.
+                                </p>
+                                <div class="mt-4 p-3 bg-black/20 rounded-lg border border-white/10">
+                                    <code class="text-xs text-amber-200">
+                                        public class MetroCity extends City {<br/>
+                                        &nbsp;&nbsp;private int populationDensity;<br/>
+                                        &nbsp;&nbsp;@Override<br/>
+                                        &nbsp;&nbsp;public double calculateRiskModifier() { ... }<br/>
+                                        }
+                                    </code>
+                                </div>
+                            </div>
+                            
+                            <div class="p-8 bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl hover:bg-white/15 transition-all">
+                                <h5 class="flex items-center gap-3 text-xl font-black text-white mb-4">
+                                    <span class="material-symbols-rounded text-rose-300">transform</span> 
+                                    Polymorphism
+                                </h5>
+                                <p class="text-sm leading-relaxed text-blue-100 font-medium">
+                                    <strong className="text-rose-300">Dynamic Strategy Selection</strong> enables runtime algorithm switching. 
+                                    The same method call executes different risk calculation logic based on the strategy object. 
+                                    CompositeRiskStrategy orchestrates multiple strategies through unified interface.
+                                </p>
+                                <div class="mt-4 p-3 bg-black/20 rounded-lg border border-white/10">
+                                    <code class="text-xs text-rose-200">
+                                        RiskStrategy strategy = new AQIRiskStrategy();<br/>
+                                        double risk = strategy.calculateRisk(data);<br/>
+                                        // Same call, different behavior
+                                    </code>
+                                </div>
+                            </div>
+                            
+                            <div class="p-8 bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl hover:bg-white/15 transition-all">
+                                <h5 class="flex items-center gap-3 text-xl font-black text-white mb-4">
+                                    <span class="material-symbols-rounded text-purple-300">settings_input_component</span> 
+                                    Strategy Pattern
+                                </h5>
+                                <p class="text-sm leading-relaxed text-blue-100 font-medium">
+                                    <strong className="text-purple-300">Algorithm Encapsulation</strong> allows interchangeable risk calculation methods. 
+                                    HeatwaveRiskStrategy, AQIRiskStrategy, DroughtRiskStrategy can be swapped without modifying core service code. 
+                                    Enables easy addition of new risk factors and A/B testing capabilities.
+                                </p>
+                                <div class="mt-4 p-3 bg-black/20 rounded-lg border border-white/10">
+                                    <code class="text-xs text-purple-200">
+                                        // Inject different strategies<br/>
+                                        new HeatwaveRiskStrategy()<br/>
+                                        new AQIRiskStrategy()<br/>
+                                        new CompositeRiskStrategy()
+                                    </code>
+                                </div>
+                            </div>
+                            
+                            <div class="p-8 bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl hover:bg-white/15 transition-all">
+                                <h5 class="flex items-center gap-3 text-xl font-black text-white mb-4">
+                                    <span class="material-symbols-rounded text-cyan-300">sensors</span> 
+                                    Observer Pattern
+                                </h5>
+                                <p class="text-sm leading-relaxed text-blue-100 font-medium">
+                                    <strong className="text-cyan-300">Decoupled Event Broadcasting</strong> enables scalable notification systems. 
+                                    AlertSubject maintains observer list and broadcasts events without knowing notification details. 
+                                    DashboardAlertObserver handles UI updates, database logging, and future notification channels.
+                                </p>
+                                <div class="mt-4 p-3 bg-black/20 rounded-lg border border-white/10">
+                                    <code class="text-xs text-cyan-200">
+                                        alertSubject.attach(observer);<br/>
+                                        alertSubject.notifyObservers(event);<br/>
+                                        // Loose coupling between source & handlers
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-12 p-8 bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl">
+                            <h4 class="text-2xl font-black text-white mb-6 flex items-center gap-3">
+                                <span class="material-symbols-rounded text-yellow-300">architecture</span>
+                                Architectural Excellence
+                            </h4>
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <h5 class="font-bold text-cyan-300 mb-3">High Cohesion</h5>
+                                    <ul class="space-y-2 text-sm text-blue-100">
+                                        <li>• Each class has single, well-defined responsibility</li>
+                                        <li>• Related methods grouped together logically</li>
+                                        <li>• Minimal dependencies between unrelated components</li>
+                                        <li>• Clear separation of concerns across layers</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-emerald-300 mb-3">Loose Coupling</h5>
+                                    <ul class="space-y-2 text-sm text-blue-100">
+                                        <li>• Interface-based dependency injection</li>
+                                        <li>• Observer pattern for event handling</li>
+                                        <li>• Strategy pattern for algorithm selection</li>
+                                        <li>• Service layer abstraction over data access</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    
+    <!-- App Logic -->
+    <script src="js/api.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/app.js?v=1.1"></script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+:root {
+    --primary: #2563eb;
+    --primary-light: #eff6ff;
+    --primary-dark: #1e40af;
+    --secondary: #64748b;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --border: #e2e8f0;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --radius-lg: 1.5rem;
+    --radius-md: 1rem;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* Sidebar Styling */
+aside#sidebar {
+    width: 16rem;
+    background-color: white;
+}
+aside#sidebar.collapsed {
+    width: 0;
+    overflow: hidden;
+}
+
+.nav-item {
+    color: var(--text-muted);
+    border: 1px solid transparent;
+}
+
+.nav-item:hover {
+    background-color: var(--primary-light);
+    color: var(--primary);
+}
+
+.nav-item.active {
+    background-color: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary-light);
+}
+
+/* Glass Effect */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+/* Section Switching */
+.section-content.hidden {
+    display: none;
+}
+
+/* Leaflet Map Overrides */
+#map {
+    background: #cbd5e1;
+}
+
+.leaflet-container {
+    font-family: 'Inter', sans-serif !important;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: var(--radius-md);
+    padding: 4px;
+    box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.15);
+    border: 1px solid #e2e8f0;
+}
+
+.leaflet-popup-tip-container {
+    display: none;
+}
+
+/* KPI Animation */
+.kpi-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Table Design */
+#rankings-table tr {
+    transition: background-color 0.2s ease;
+}
+
+#rankings-table tr:hover {
+    background-color: var(--primary-light);
+    cursor: pointer;
+}
+
+/* ======================== */
+/* Interactive Map Controls */
+/* ======================== */
+
+/* View Mode Buttons (Risk / Pollution / Thermal) */
+.map-view-btn {
+    background: rgba(241, 245, 249, 0.9);
+    color: #64748b;
+    border: 1.5px solid #e2e8f0;
+    cursor: pointer;
+}
+
+.map-view-btn:hover {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #bfdbfe;
+}
+
+.map-view-btn.active-map-btn {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Base Layer Buttons */
+.map-layer-btn {
+    background: rgba(241, 245, 249, 0.9);
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+}
+
+.map-layer-btn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.map-layer-btn.active-layer-btn {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+}
+
+/* City Labels on Interactive Map */
+.city-map-label {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.map-label-content {
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    color: #0f172a;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.9), 0 0 12px rgba(255, 255, 255, 0.7);
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+/* Pulse ring animation for critical markers */
+.pulse-ring {
+    animation: pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulseRing {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.15; }
+}
+
+/* ======================== */
+/* Alert Card Styling       */
+/* ======================== */
+.alert-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.alert-card:hover {
+    transform: translateY(-2px);
+}
+
+/* ======================== */
+/* ML Section Enhancements  */
+/* ======================== */
+#ml-city-selector {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+}
+
+#ml-confidence-bar {
+    transition: width 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ======================== */
+/* Responsive Overrides     */
+/* ======================== */
+@media (max-width: 1024px) {
+    .grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .col-span-8, .col-span-4 {
+        grid-column: span 12 / span 12;
+    }
+}
+
+@media (max-width: 640px) {
+    .grid-cols-4 {
+        grid-template-columns: 1fr;
+    }
+    #sidebar {
+        position: fixed;
+        height: 100%;
+        z-index: 100;
+    }
+}
+
+/* ======================== */
+/* Scrollbar Styling        */
+/* ======================== */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Standard keyframe animations */
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+@keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+
+/* ==================== PROJECT INFO MODAL STYLES ==================== */
+#info-modal {
+    transition: opacity 0.3s ease-in-out;
+}
+
+#info-modal > div {
+    transform: translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#info-modal.opacity-100 > div {
+    transform: translateY(0);
+}
+
+.modal-glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Custom OOP Badge Styles */
+.oop-badge {
+    transition: all 0.2s ease;
+}
+
+.oop-badge:hover {
+    transform: scale(1.05);
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+/* Micro-animations for Header Buttons */
+button[onclick*="toggleInfoModal"]:active, 
+button[onclick*="downloadLatestData"]:active {
+    transform: scale(0.95);
+}

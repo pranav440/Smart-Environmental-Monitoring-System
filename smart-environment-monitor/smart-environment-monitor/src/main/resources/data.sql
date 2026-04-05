@@ -1,0 +1,80 @@
+-- Seed data: Cities
+INSERT IGNORE INTO cities (name, latitude, longitude, city_type, population_density, vehicle_count, sea_level, cyclone_prone, altitude, avalanche_risk) VALUES
+('Delhi', 28.6139, 77.2090, 'Metro', 11312, 1200000, 0, FALSE, 0, FALSE),
+('Mumbai', 19.0760, 72.8777, 'Metro', 20634, 800000, 0, FALSE, 0, FALSE),
+('Bengaluru', 12.9716, 77.5946, 'Metro', 4381, 600000, 0, FALSE, 0, FALSE),
+('Kolkata', 22.5726, 88.3639, 'Metro', 24252, 500000, 0, FALSE, 0, FALSE),
+('Chennai', 13.0827, 80.2707, 'Metro', 26553, 550000, 0, FALSE, 0, FALSE),
+('Hyderabad', 17.3850, 78.4867, 'Metro', 18480, 450000, 0, FALSE, 0, FALSE),
+('Ahmedabad', 23.0225, 72.5714, 'Metro', 12000, 400000, 0, FALSE, 0, FALSE),
+('Pune', 18.5204, 73.8567, 'Metro', 5600, 350000, 0, FALSE, 0, FALSE),
+('Jaipur', 26.9124, 75.7873, 'Metro', 6500, 300000, 0, FALSE, 0, FALSE),
+('Lucknow', 26.8467, 80.9462, 'Metro', 4500, 250000, 0, FALSE, 0, FALSE),
+('Varanasi', 25.3176, 82.9739, 'Metro', 5000, 200000, 0, FALSE, 0, FALSE),
+('Agra', 27.1767, 78.0081, 'Metro', 4800, 180000, 0, FALSE, 0, FALSE),
+('Nagpur', 21.1458, 79.0882, 'Metro', 3700, 160000, 0, FALSE, 0, FALSE),
+('Indore', 22.7196, 75.8577, 'Metro', 4200, 150000, 0, FALSE, 0, FALSE),
+('Bhopal', 23.2599, 77.4126, 'Metro', 3800, 140000, 0, FALSE, 0, FALSE),
+('Patna', 25.5941, 85.1376, 'Metro', 5200, 130000, 0, FALSE, 0, FALSE),
+('Surat', 21.1702, 72.8311, 'Metro', 6300, 280000, 0, FALSE, 0, FALSE),
+('Vadodara', 22.3072, 73.1812, 'Metro', 4100, 120000, 0, FALSE, 0, FALSE),
+('Ranchi', 23.3441, 85.3096, 'Metro', 3000, 100000, 0, FALSE, 0, FALSE),
+('Raipur', 21.2514, 81.6296, 'Metro', 3200, 90000, 0, FALSE, 0, FALSE),
+('Chandigarh', 30.7333, 76.7794, 'Metro', 9252, 200000, 0, FALSE, 0, FALSE),
+('Amritsar', 31.6340, 74.8723, 'Metro', 4200, 110000, 0, FALSE, 0, FALSE),
+('Coimbatore', 11.0168, 76.9558, 'Metro', 3800, 130000, 0, FALSE, 0, FALSE),
+('Madurai', 9.9252, 78.1198, 'Metro', 4100, 100000, 0, FALSE, 0, FALSE),
+('Mysore', 12.2958, 76.6394, 'Metro', 3500, 90000, 0, FALSE, 0, FALSE),
+('Vijayawada', 16.5062, 80.6480, 'Metro', 3800, 95000, 0, FALSE, 0, FALSE),
+('Guntur', 16.3067, 80.4365, 'Metro', 3200, 70000, 0, FALSE, 0, FALSE),
+('Nashik', 19.9975, 73.7898, 'Metro', 3600, 85000, 0, FALSE, 0, FALSE),
+('Aurangabad', 19.8762, 75.3433, 'Metro', 3400, 80000, 0, FALSE, 0, FALSE),
+('Visakhapatnam', 17.6868, 83.2185, 'Coastal', 0, 0, 3.5, TRUE, 0, FALSE),
+('Goa', 15.2993, 74.1240, 'Coastal', 0, 0, 2.0, FALSE, 0, FALSE),
+('Kochi', 9.9312, 76.2673, 'Coastal', 0, 0, 4.0, TRUE, 0, FALSE),
+('Mangalore', 12.9141, 74.8560, 'Coastal', 0, 0, 2.5, FALSE, 0, FALSE),
+('Thiruvananthapuram', 8.5241, 76.9366, 'Coastal', 0, 0, 3.0, TRUE, 0, FALSE),
+('Bhubaneswar', 20.2961, 85.8245, 'Coastal', 0, 0, 2.0, TRUE, 0, FALSE),
+('Puri', 19.8135, 85.8312, 'Coastal', 0, 0, 1.5, TRUE, 0, FALSE),
+('Shimla', 31.1048, 77.1734, 'Himalayan', 0, 0, 0, FALSE, 2276, FALSE),
+('Manali', 32.2396, 77.1887, 'Himalayan', 0, 0, 0, FALSE, 2050, FALSE),
+('Darjeeling', 27.0417, 88.2663, 'Himalayan', 0, 0, 0, FALSE, 2042, FALSE),
+('Gangtok', 27.3389, 88.6065, 'Himalayan', 0, 0, 0, FALSE, 1650, FALSE),
+('Srinagar', 34.0837, 74.7973, 'Himalayan', 0, 0, 0, FALSE, 1585, TRUE),
+('Leh', 34.1526, 77.5771, 'Himalayan', 0, 0, 0, FALSE, 3524, TRUE),
+('Mussoorie', 30.4598, 78.0704, 'Himalayan', 0, 0, 0, FALSE, 2005, FALSE),
+('Nainital', 29.3803, 79.4620, 'Himalayan', 0, 0, 0, FALSE, 2084, FALSE);
+
+-- Seed data: Default alert thresholds
+INSERT IGNORE INTO alert_thresholds (alert_type, threshold_value, description) VALUES
+('EXTREME_RISK', 75.0, 'Risk score threshold for extreme risk alerts'),
+('HEATWAVE', 40.0, 'Temperature threshold (Celsius) for heatwave alerts'),
+('HIGH_AQI', 200.0, 'AQI threshold for poor air quality alerts'),
+('ANOMALY_DETECTED', 3.5, 'Modified Z-score threshold for anomaly detection'),
+('DROUGHT_RISK', 20.0, 'Humidity threshold (%) for drought risk alerts');
+
+-- Seed 10 Days History for ML
+INSERT IGNORE INTO city_risk_history (city_id, risk_score, temperature, aqi, humidity, wind_speed, pressure, recorded_at) VALUES 
+(1, 45, 32.5, 150, 40, 10, 1010, DATEADD('DAY', -10, CURRENT_TIMESTAMP)),
+(1, 48, 33.0, 160, 42, 12, 1009, DATEADD('DAY', -9, CURRENT_TIMESTAMP)),
+(1, 52, 34.5, 180, 45, 8, 1008, DATEADD('DAY', -8, CURRENT_TIMESTAMP)),
+(1, 55, 35.0, 190, 48, 5, 1007, DATEADD('DAY', -7, CURRENT_TIMESTAMP)),
+(1, 60, 36.5, 210, 50, 7, 1006, DATEADD('DAY', -6, CURRENT_TIMESTAMP)),
+(1, 65, 37.0, 230, 55, 4, 1005, DATEADD('DAY', -5, CURRENT_TIMESTAMP)),
+(1, 70, 38.5, 250, 60, 6, 1004, DATEADD('DAY', -4, CURRENT_TIMESTAMP)),
+(1, 75, 40.0, 280, 65, 3, 1003, DATEADD('DAY', -3, CURRENT_TIMESTAMP)),
+(1, 80, 41.5, 310, 70, 5, 1002, DATEADD('DAY', -2, CURRENT_TIMESTAMP)),
+(1, 85, 42.0, 342, 75, 2, 1001, DATEADD('DAY', -1, CURRENT_TIMESTAMP));
+
+INSERT IGNORE INTO city_risk_history (city_id, risk_score, temperature, aqi, humidity, wind_speed, pressure, recorded_at) VALUES 
+(2, 30, 28.5, 60, 60, 15, 1015, DATEADD('DAY', -10, CURRENT_TIMESTAMP)),
+(2, 32, 29.0, 65, 62, 14, 1014, DATEADD('DAY', -9, CURRENT_TIMESTAMP)),
+(2, 35, 29.5, 70, 65, 13, 1013, DATEADD('DAY', -8, CURRENT_TIMESTAMP)),
+(2, 38, 30.0, 75, 68, 12, 1012, DATEADD('DAY', -7, CURRENT_TIMESTAMP)),
+(2, 40, 30.5, 80, 70, 11, 1011, DATEADD('DAY', -6, CURRENT_TIMESTAMP)),
+(2, 42, 31.0, 85, 72, 10, 1010, DATEADD('DAY', -5, CURRENT_TIMESTAMP)),
+(2, 45, 31.5, 90, 75, 9, 1009, DATEADD('DAY', -4, CURRENT_TIMESTAMP)),
+(2, 48, 32.0, 95, 78, 8, 1008, DATEADD('DAY', -3, CURRENT_TIMESTAMP)),
+(2, 50, 32.5, 100, 80, 7, 1007, DATEADD('DAY', -2, CURRENT_TIMESTAMP)),
+(2, 55, 33.0, 110, 85, 6, 1006, DATEADD('DAY', -1, CURRENT_TIMESTAMP));
+
