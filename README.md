@@ -1,4 +1,4 @@
-# 🛡️ TerraGuard: AI-Driven Environmental Safety & Risk Intelligence
+# 🛡️ Smart Environmental Monitoring System: AI-Driven Risk Intelligence
 
 > **Empowering regional safety with real-time environmental telemetry and predictive machine learning models.**
 
@@ -6,7 +6,7 @@
 ![Tech Stack](https://img.shields.io/badge/Technologies-Spring_Boot_%7C_JS_%7C_ML-blue?style=for-the-badge)
 
 ## 🌎 Overview
-TerraGuard is a comprehensive environmental intelligence platform designed to monitor, analyze, and predict regional hazards. By integrating real-time air quality, thermal data, and meteorological telemetry, the system provides a unified "Risk Score" to help decision-makers identify vulnerable clusters before crises occur.
+**Smart Environmental Monitoring System** is a comprehensive environmental intelligence platform designed to monitor, analyze, and predict regional hazards. By integrating real-time air quality, thermal data, and meteorological telemetry, the system provides a unified "Risk Score" to help decision-makers identify vulnerable clusters before crises occur.
 
 ## 🚀 Key Features
 
