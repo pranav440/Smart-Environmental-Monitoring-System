@@ -10,9 +10,9 @@
 
 ## 🖼️ Visual Showcase
 
-| Live Dashboard | Predictive Intelligence | Interactive Map |
+| Live Dashboard | Interactive GIS Map | Analytics Leaderboard |
 | :---: | :---: | :---: |
-| ![Dashboard](screenshots/dashboard.png) | ![Analytics](screenshots/predictive_intelligence.png) | ![Map](screenshots/map_view.png) |
+| ![Dashboard](screenshots/dashboard.png) | ![GIS Map](screenshots/interactive_map.png) | ![Analytics](screenshots/analytics.png) |
 
 ## 🚀 Key Features
 
