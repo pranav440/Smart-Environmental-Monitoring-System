@@ -1,0 +1,25 @@
+# Compiled class file
+*.class
+
+# Log files
+*.log
+*.txt
+
+# Package Files (Binaries)
+*.jar
+*.war
+/target/
+
+# Local Maven Wrapper
+/.maven/
+/maven.zip
+
+# IDE Settings
+.vscode/
+.idea/
+*.iml
+
+# Security: Ignore environment files
+.env
+.env.local
+.env.*
