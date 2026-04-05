@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Smart Environmental Monitor - START",
+            "type": "node", // Dummy type to allow using preLaunchTask, or custom shell
+            "request": "launch",
+            "preLaunchTask": "Run Project (Smart Environmental Monitor)",
+            "presentation": {
+                "hidden": true
+            }
+        }
+    ]
+}
